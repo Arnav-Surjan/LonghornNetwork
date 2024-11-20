@@ -4,12 +4,12 @@ import java.util.*;
 public class DataParser {
     public static List<UniversityStudent> parseStudents(String filename) throws IOException {
         List<UniversityStudent> students = new ArrayList<>();
-        String name = "";
-        int age = 0;
-        String gender = "";
-        int year = 0;
-        String major = "";
-        double gpa = 0.0;
+        String name = null;
+        Integer age = null;
+        String gender = null;
+        Integer year = null;
+        String major = null;
+        Double gpa = null;
         List<String> roommatePreferences = new ArrayList<>();
         List<String> previousInternships = new ArrayList<>();
 
@@ -18,46 +18,81 @@ public class DataParser {
                 String line = scanner.nextLine().trim();
 
                 if (line.equals("Student:")) {
-                    if (!name.isEmpty()) {
-                        // Create a new UniversityStudent and add to the list
+                    // Add the previous student if all required fields are present
+                    if (name != null && age != null && gender != null && year != null && major != null && gpa != null) {
                         students.add(new UniversityStudent(name, age, gender, year, major, gpa,
                                 new ArrayList<>(roommatePreferences), new ArrayList<>(previousInternships)));
-                        // Reset variables for next student
-                        roommatePreferences.clear();
-                        previousInternships.clear();
                     }
-                    name = "";
-                } else if (line.startsWith("Name:")) {
-                    name = line.substring("Name:".length()).trim();
-                } else if (line.startsWith("Age:")) {
-                    age = Integer.parseInt(line.substring("Age:".length()).trim());
-                } else if (line.startsWith("Gender:")) {
-                    gender = line.substring("Gender:".length()).trim();
-                } else if (line.startsWith("Year:")) {
-                    year = Integer.parseInt(line.substring("Year:".length()).trim());
-                } else if (line.startsWith("Major:")) {
-                    major = line.substring("Major:".length()).trim();
-                } else if (line.startsWith("GPA:")) {
-                    gpa = Double.parseDouble(line.substring("GPA:".length()).trim());
-                } else if (line.startsWith("RoommatePreferences:")) {
-                    roommatePreferences = Arrays.asList(
-                            line.substring("RoommatePreferences:".length()).trim().split(",\\s*"));
-                } else if (line.startsWith("PreviousInternships:")) {
-                    previousInternships = Arrays.asList(
-                            line.substring("PreviousInternships:".length()).trim().split(",\\s*"));
+
+                    // Reset fields for the next student
+                    name = null;
+                    age = null;
+                    gender = null;
+                    year = null;
+                    major = null;
+                    gpa = null;
+                    roommatePreferences.clear();
+                    previousInternships.clear();
+                } else if (line.contains(":")) {
+                    String[] parts = line.split(":", 2);
+                    if (parts.length < 2) continue; // Skip invalid lines
+                    String key = parts[0].trim();
+                    String value = parts[1].trim();
+
+                    switch (key) {
+                        case "Name":
+                            name = value;
+                            break;
+                        case "Age":
+                            try {
+                                age = Integer.parseInt(value);
+                            } catch (NumberFormatException e) {
+                                System.err.println("Invalid age for student: " + value);
+                            }
+                            break;
+                        case "Gender":
+                            gender = value;
+                            break;
+                        case "Year":
+                            try {
+                                year = Integer.parseInt(value);
+                            } catch (NumberFormatException e) {
+                                System.err.println("Invalid year for student: " + value);
+                            }
+                            break;
+                        case "Major":
+                            major = value;
+                            break;
+                        case "GPA":
+                            try {
+                                gpa = Double.parseDouble(value);
+                            } catch (NumberFormatException e) {
+                                System.err.println("Invalid GPA for student: " + value);
+                            }
+                            break;
+                        case "RoommatePreferences":
+                            roommatePreferences = Arrays.asList(value.split(",\\s*"));
+                            break;
+                        case "PreviousInternships":
+                            previousInternships = Arrays.asList(value.split(",\\s*"));
+                            break;
+                        default:
+                            System.err.println("Unknown field: " + key);
+                    }
+                } else {
+                    System.err.println("Invalid line format: " + line);
                 }
             }
 
-            // Add the last student to the list
-            if (!name.isEmpty()) {
+            // Add the last student
+            if (name != null && age != null && gender != null && year != null && major != null && gpa != null) {
                 students.add(new UniversityStudent(name, age, gender, year, major, gpa,
                         new ArrayList<>(roommatePreferences), new ArrayList<>(previousInternships)));
             }
-
-            return students;
         } catch (IOException e) {
-            e.printStackTrace(); // Handle exceptions
+            System.err.println("Error reading file: " + e.getMessage());
         }
-        return null;
+
+        return students;
     }
 }
