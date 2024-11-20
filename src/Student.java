@@ -11,4 +11,15 @@ public abstract class Student {
     protected List<String> previousInternships;
 
     public abstract int calculateConnectionStrength(Student other);
+
+    public Student(String name, int age, String gender, int year, String major, double gpa, List<String> roommatePreferences, List<String> previousInternships) {
+        this.name = name;
+        this.age = age;
+        this.gender = gender;
+        this.year = year;
+        this.major = major;
+        this.gpa = gpa;
+        this.roommatePreferences = roommatePreferences;
+        this.previousInternships = previousInternships;
+    }
 }
