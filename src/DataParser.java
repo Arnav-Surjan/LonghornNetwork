@@ -2,6 +2,12 @@ import java.io.*;
 import java.util.*;
 
 public class DataParser {
+    /**
+     * Parses a list of UniversityStudent objects from a file.
+     * @param filename name of file to be read from
+     * @return list of UniversityStudent objects created from filename
+     * @throws IOException if any issues arise when parsing students from filename
+     */
     public static List<UniversityStudent> parseStudents(String filename) throws IOException {
         List<UniversityStudent> students = new ArrayList<>();
         String name = null;
@@ -16,6 +22,11 @@ public class DataParser {
         try (Scanner scanner = new Scanner(new File(filename))) {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine().trim();
+
+                // Skip empty lines
+                if (line.isEmpty()) {
+                    continue;
+                }
 
                 if (line.equals("Student:")) {
                     // Add the previous student if all required fields are present
@@ -91,8 +102,8 @@ public class DataParser {
             }
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
+        } finally {
+            return students;
         }
-
-        return students;
     }
 }

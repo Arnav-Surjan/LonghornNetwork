@@ -1,11 +1,17 @@
 import java.util.*;
 
+/**
+ * Graph to represent connections between Students (for use with Pod Formation and Referral Path Finding)
+ */
 public class StudentGraph {
 
     // Adjacency list representation of the graph
     private Map<String, List<Edge>> graph;
 
-    // Constructor: Initializes the graph from a list of students
+    /**
+     * Initializes a weighted graph from a list of students
+     * @param students list of University Students
+     */
     public StudentGraph(List<UniversityStudent> students) {
         this.graph = new HashMap<>();
 
@@ -26,40 +32,64 @@ public class StudentGraph {
         }
     }
 
-    // Adds a student (node) to the graph
+    /**
+     * Adds a student (node) to the graph
+     * @param student student to add
+     */
     private void addStudent(String student) {
         graph.putIfAbsent(student, new ArrayList<>());
     }
 
-    // Adds a weighted edge between two students
+    /**
+     * Adds a weighted edge between two students
+     * @param student1 first student
+     * @param student2 second student
+     * @param weight weight between students
+     */
     private void addEdge(String student1, String student2, double weight) {
         // Add the edge in both directions (undirected graph)
         graph.get(student1).add(new Edge(student2, weight));
         graph.get(student2).add(new Edge(student1, weight));
     }
 
-    // Returns all neighbors (edges) of a specific student
+    /**
+     * Returns all neighbors (edges) of a specific student
+     * @param student student to find edges of
+     * @return list of neighboring students
+     */
     public List<Edge> getNeighbors(String student) {
         return graph.getOrDefault(student, new ArrayList<>());
     }
 
-    // Returns all students (nodes) in the graph
+    /**
+     * Returns all students (nodes) in the graph
+     * @return all nodes in the graph
+     */
     public Set<String> getAllNodes() {
         return graph.keySet();
     }
 
-    // Debugging utility: Prints the adjacency list
+    /**
+     * Debugging utility: Prints the adjacency list
+     */
     public void printGraph() {
         for (Map.Entry<String, List<Edge>> entry : graph.entrySet()) {
             System.out.println(entry.getKey() + " -> " + entry.getValue());
         }
     }
 
-    // Inner class to represent an edge
+    /**
+     * Inner class to represent an edge
+     */
     public static class Edge {
         String neighbor;
         double weight;
 
+        /**
+         * Constructor for edges
+         * @param neighbor neighbor connected by edge
+         * @param weight weight of edge
+         */
         public Edge(String neighbor, double weight) {
             this.neighbor = neighbor;
             this.weight = weight;
